@@ -2,16 +2,20 @@
 import * as echarts from 'echarts'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import HackerStateForm from '../components/HackerStateForm.vue'
-import { useStore } from '@/stores/counter'
-import { storeToRefs } from 'pinia'
+import CreateHackerHouseForm from '../components/CreateHackerHouseForm.vue'
+import ViewParticipantsForm from '../components/ViewParticipantsForm.vue'
+
+// import { useStore } from '@/stores/counter'
+// import { storeToRefs } from 'pinia'
 // 可以在组件中的任意位置访问 `store` 变量 ✨
-const store = useStore()
-const { count, userInfo } = storeToRefs(store)
-const { increment } = store
+// const store = useStore()
+// const { count, userInfo } = storeToRefs(store)
+// const { increment } = store
 let options = null
 const chart = ref(null)
 let myChart = null
-const dialogVisible = ref(false)
+let provider;
+let isConnect = ref(false)
 const skills = ref([
   { language: 'Rust', number: 1 },
   { language: 'Solidity', number: 1 },
@@ -41,10 +45,10 @@ const repos = ref([
     options: '10 PR Merged'
   }
 ])
-function setInfo() {
-  let newInfo = { count: '123' }
-  store.setUserInfo(newInfo)
-}
+// function setInfo() {
+//   let newInfo = { count: '123' }
+//   store.setUserInfo(newInfo)
+// }
 function initChart() {
   // 使用ECharts初始化图表
   const myChart = echarts.init(chart.value)
@@ -58,11 +62,11 @@ function initChart() {
       type: 'value'
     },
     grid: {
-                x: 50,
-                y: 25,
-                x2: 30,
-                y2: 35
-              },
+      x: 50,
+      y: 25,
+      x2: 30,
+      y2: 35
+    },
     series: [
       {
         data: [100, 400, 1600],
@@ -84,23 +88,68 @@ function resizeChart() {
   }
 }
 onMounted(() => {
+  getProvider()
   initChart()
   window.addEventListener('resize', resizeChart)
   resizeChart()
+ 
 })
 onBeforeUnmount(() => {
   // 在组件销毁前销毁图表
   if (chart.value) {
     chart.value.dispose()
   }
+  logoutHandle()
 })
+function connectWallet() {
+  getProvider()
+  console.log("connectWallet",provider)
+  provider.connect()
+  isConnect.value = true
+}
+function logoutHandle() {
+  console.log('logout')
+  provider.disconnect();
+  
+  isConnect.value = false
+  provider = null;
+  console.log(provider)
+}
+function getProvider () {
+  if ('phantom' in window) {
+    provider = window.phantom?.solana;
+    console.log(provider)
+    if (provider?.isPhantom) {
+      return provider;
+    }
+  }
+  window.open('https://phantom.app/', '_blank');
+};
 </script>
 <template>
   <div class="common-layout">
     <el-container>
-      <el-header height="65px">
+      <el-header height="4rem">
         <p class="title">Sol Hack ID</p>
-        <img src="../../public/heart.png" />
+        <el-popover
+          placement="top-start"
+          :width="100"
+          trigger="hover"
+          v-if="isConnect == true "
+        >
+        <div class="Profile">
+          <el-text tag="ins" size="large">Profile</el-text>
+        </div>
+        <div class="LogOut" @click="logoutHandle">
+          <el-text tag="ins" size="large">Log Out</el-text>
+        </div>
+        
+          <template #reference>
+            <img src="../../public/heart.png" /> 
+            
+          </template>
+        </el-popover>
+        <el-text v-if="isConnect == false" @click="connectWallet()"  tag="ins" size="large">Connect Wallet</el-text>
       </el-header>
       <el-container class="container">
         <el-aside></el-aside>
@@ -118,23 +167,24 @@ onBeforeUnmount(() => {
               <p>profile_completion</p>
               <el-progress :text-inside="true" :stroke-width="26" :percentage="70" />
             </div>
-            <div class="profile_completion_right">
+            <!-- <div class="profile_completion_right">
               <el-button color="#FFD850" class="warning_view" size="large" round
                 >View SBT</el-button
               >
-            </div>
+            </div> -->
           </div>
           <div class="hackerManage">
             <!-- <el-button color="#FFD850" class="warning_Enter" size="large" round
               >Enter Hacker State</el-button
             > -->
-            <HackerStateForm v-model="dialogVisible" />
-            <el-button color="#FFD850" class="warning_Create" size="large" round
+            <HackerStateForm />
+            <CreateHackerHouseForm />
+            <!-- <el-button color="#FFD850" class="warning_Create" size="large" round
               >Create Hacker House</el-button
-            >
-            <el-button color="#FFD850" class="warning_Manage" size="large" round
-              >Manage HH</el-button
-            >
+            > -->
+            <ViewParticipantsForm />
+            <!-- <el-button color="#FFD850" class="warning_Manage" size="large" round
+              >Manage HH</el-button> -->
           </div>
           <div class="devPro">
             <p class="devPro_title">Web3 Developer Proficiency</p>
@@ -223,6 +273,21 @@ onBeforeUnmount(() => {
   </div>
 </template>
 <style lang="less" scoped>
+.el-popover{
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  & .el-text{
+    cursor: pointer;
+  }
+  .Profile{
+    padding-left: .5rem;
+    margin-bottom: 1rem;
+  }
+  .LogOut{
+    padding-left: .5rem;
+  }
+}
 .el-button {
   color: #000;
 }
@@ -238,6 +303,12 @@ onBeforeUnmount(() => {
   & img {
     width: 3rem;
     height: 3rem;
+  }
+  & .el-text{
+    color: #fff;
+    &:hover{
+      cursor: pointer;
+    }
   }
 }
 .container {
@@ -378,7 +449,6 @@ onBeforeUnmount(() => {
           flex: 1;
           justify-content: space-between;
           padding-right: 1rem;
-          
         }
       }
       .skills {
@@ -408,10 +478,10 @@ onBeforeUnmount(() => {
         border-left: 0.2rem #8c8c8c solid;
         margin-bottom: 1rem;
         padding-left: 3rem;
-        &:hover{
-        cursor: pointer;
-        box-shadow: 0 0 5px #8c8c8c;
-      }
+        &:hover {
+          cursor: pointer;
+          box-shadow: 0 0 5px #8c8c8c;
+        }
       }
     }
   }
@@ -444,16 +514,15 @@ onBeforeUnmount(() => {
         height: 1.5rem;
       }
     }
-    &_info{
+    &_info {
       margin-left: 2rem;
-      
     }
-    &_item{
+    &_item {
       height: 7.3125rem;
       border-left: 0.2rem #8c8c8c solid;
-      padding:.5rem 2rem ;
+      padding: 0.5rem 2rem;
       margin-bottom: 1rem;
-      &:hover{
+      &:hover {
         cursor: pointer;
         box-shadow: 0 0 5px #8c8c8c;
       }
