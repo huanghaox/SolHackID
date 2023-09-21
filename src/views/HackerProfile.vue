@@ -1,14 +1,22 @@
 <script setup>
 import * as echarts from 'echarts'
-import { ref,onMounted,onBeforeUnmount } from 'vue'
-import PopupForm from '../components/PopupForm.vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import PopupForm from '../components/PopupForm.vue'
 let options = null
-const chart = ref(null);
-let myChart = null;
-const dialogVisible = ref(false);
+const chart = ref(null)
+let myChart = null
+const dialogVisible = ref(false)
+const skills = [
+  { language: 'Rust', nums: 1 },
+  { language: 'Solidity', nums: 1 },
+  { language: 'AWS', nums: 1 },
+  { language: 'Android', nums: 1 },
+  { language: 'Data Mining', nums: 1 }
+]
+
 function initChart() {
   // 使用ECharts初始化图表
-  const myChart = echarts.init(chart.value);
+  const myChart = echarts.init(chart.value)
   // 在这里设置你的图表配置和数据
   options = {
     xAxis: {
@@ -33,22 +41,22 @@ function initChart() {
 function resizeChart() {
   if (myChart && chart.value) {
     // 通过获取容器的宽度和高度来设置图表的大小
-    const width = chart.value.clientWidth;
-    const height = chart.value.clientHeight;
-    myChart.resize({ width, height });
+    const width = chart.value.clientWidth
+    const height = chart.value.clientHeight
+    myChart.resize({ width, height })
   }
 }
 onMounted(() => {
   initChart()
-  window.addEventListener('resize', resizeChart);
-  resizeChart();
+  window.addEventListener('resize', resizeChart)
+  resizeChart()
 })
 onBeforeUnmount(() => {
   // 在组件销毁前销毁图表
   if (chart.value) {
-    chart.value.dispose();
+    chart.value.dispose()
   }
-});
+})
 </script>
 <template>
   <div class="common-layout">
@@ -57,7 +65,7 @@ onBeforeUnmount(() => {
         <p class="title">Sol Hack ID</p>
         <img src="../../public/heart.png" />
       </el-header>
-      <el-container class="container"> 
+      <el-container class="container">
         <el-aside></el-aside>
         <el-main>
           <div class="profile_bg">
@@ -103,9 +111,34 @@ onBeforeUnmount(() => {
           <div class="Highlights">
             <div class="Highlights_left">
               <p class="Highlights_title">Github Highlights</p>
+              <div class="skills">
+                <p class="skills_title">Skills</p>
+              </div>
+
+              <div v-for="(item, index) in skills" :key="index" class="skills">
+                <div class="skills_bg"></div>
+                <div class="skills_info">
+                  <p>{{ item.language }}</p>
+                  <p>{{ item.nums }} Reops</p>
+                </div>
+              </div>
+              <div class="Highlights_module">
+                <div class="Highlights_module_info">
+                  <p>240</p>
+                  <p>Commits</p>
+                </div>
+                <div class="Highlights_module_info">
+                  <p>240</p>
+                  <p>Stars</p>
+                </div>
+                <div class="Highlights_module_info">
+                  <p>240</p>
+                  <p>Forks</p>
+                </div>
+              </div>
             </div>
             <div class="Highlights_right">
-
+              
             </div>
           </div>
         </el-main>
@@ -132,12 +165,11 @@ onBeforeUnmount(() => {
     height: 3rem;
   }
 }
-.container{
+.container {
   display: flex;
-
 }
 .el-aside {
-  flex:1;
+  flex: 1;
 }
 .el-main {
   flex: 3;
@@ -153,16 +185,16 @@ onBeforeUnmount(() => {
   }
   .profile_avatar {
     position: absolute;
-    top: 20rem;
-    left: 25rem;
+    top: 21rem;
+    left: 30rem;
     border: 0.5rem #fff solid;
     border-radius: 50%;
     width: 15rem;
     height: 15rem;
     & img {
-      width: 100%; /* 图片宽度占满容器 */
-      height: 100%; /* 图片高度占满容器 */
-      object-fit: cover; /* 保持图片纵横比并覆盖整个容器 */
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
   }
   .profile_completion {
@@ -202,36 +234,94 @@ onBeforeUnmount(() => {
       width: 9rem;
     }
   }
-  .devPro{
+  .devPro {
     display: flex;
     flex-direction: column;
     height: 18.75rem;
-    border: .15rem #8C8C8C solid;
+    border: 0.15rem #8c8c8c solid;
     border-radius: 1rem;
     margin: 4rem;
     padding: 1rem;
 
-    &_footer{
+    &_footer {
       display: flex;
       flex: 1;
-      &_left{
+      &_left {
         display: flex;
         flex-direction: column;
         justify-content: space-around;
         margin-right: 10px;
         padding: 10px 0;
-        .percent_info{
-          border:1px #8C8C8C solid;
+        .percent_info {
+          border: 1px #8c8c8c solid;
           border-radius: 10%;
           height: 4rem;
-          padding: .5rem;
+          padding: 0.5rem;
           font-size: 1rem;
         }
       }
-      &_right{
+      &_right {
         flex: 1;
         width: 100%;
       }
+    }
+  }
+  .Highlights {
+    display: flex;
+    height: 27rem;
+    border: 0.15rem #8c8c8c solid;
+    border-radius: 1rem;
+    margin: 4rem;
+    padding: 1rem;
+    &_title {
+      margin-bottom: 1rem;
+    }
+    &_left {
+      flex: 2;
+      .skills {
+        width: 30rem;
+        border-radius: 0.9375rem;
+        background: #d9d9d9;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        &_title {
+          padding-left: 1rem;
+        }
+        &_bg {
+          width: 1.25rem;
+          height: 1.25rem;
+          margin:0 1rem;
+          // border-radius: 50%;
+          background-color: #00ce65;
+        }
+        &_info {
+          display: flex;
+          flex: 1;
+          justify-content: space-between;
+          padding-right: 1rem;
+        }
+      }
+      
+    }
+    &_module{
+        display: flex;
+        padding-right: 3rem;
+        margin-top: 2rem;
+        &_info{
+          flex: 1;
+          width: 7.5rem;
+          height: 5rem;
+          border: 1px #8c8c8c solid;
+          border-radius: 10%;
+          padding: 0.5rem;
+          font-size: 1rem;
+          margin-right: 2rem;
+          text-align: center;
+        }
+      }
+    &_right {
+      flex: 1.5;
     }
   }
 }
