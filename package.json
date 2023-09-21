@@ -10,13 +10,10 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@solana/spl-token": "^0.1.8",
-    "@solana/wallet-adapter-wallets": "^0.19.22",
     "@solana/web3.js": "^1.78.5",
     "echarts": "^5.4.3",
     "element-plus": "^2.3.14",
     "pinia": "^2.1.6",
-    "solana-wallets-vue": "^0.6.0",
     "vue": "^3.3.4",
     "vue-router": "^4.2.4"
   },
