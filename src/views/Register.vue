@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+
 const input = ref('')
 const loading = ref(false)
 const step = ref(1)
@@ -13,7 +14,7 @@ function nextHandle() {
   step.value = 3
 }
 function MintHandle() {
-  alert("go to profile")
+  // this.$router.push('/HackerProfile');
   step.value = 1
 }
 </script>
@@ -38,7 +39,9 @@ function MintHandle() {
           <el-text tag="ins" @click="nextHandle">Next</el-text>
         </div>
         <div class="step_three" v-else>
+          <router-link to="/HackerProfile">
           <el-text tag="ins" class="tips_three" @click="MintHandle">Claim Hacker SBT On SOLANA</el-text>
+        </router-link>
         </div>
         <div class="footer">STEP {{ step }}/3</div>
       </el-card>
