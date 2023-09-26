@@ -1,53 +1,50 @@
 <script setup>
-import axios from 'axios';
 import { ref,onMounted } from 'vue'
-// import { getCode } from '../utils/request.js'
+import { getAllAndroidPlugins } from '../utils/request.js'
 import { useStore } from '@/stores/counter'
-import { storeToRefs } from 'pinia'
 
 const store = useStore()
-const { count } = storeToRefs(store)
-
 const input = ref('')
 const loading = ref(false)
 const step = ref(1)
 const code = ref('')
-// function getid(){
-//   axios.get(`http://localhost:5173/github/callback?code=${code.value}`) // 替换为你的API端点
-//         .then(response => {
-//           console.log(response);
-//         })
-//         .catch(error => {
-//           console.error('请求失败：', error);
-//         });
-// }
+const userInfo = ref()
 function clickHandle() {
   step.value = 2
   window.sessionStorage.setItem('count', 2)
   window.open('https://github.com/login/oauth/authorize?client_id=152c6b12ae755df02796')
+
   code.value = window.location.search.slice(6)
 }
 async function nextHandle() {
   alert(input.value)
-   store.increment()
-  // const res = await getCode(code)
+  store.setUserName({name:input.value})
   window.sessionStorage.setItem('count', 3)
   step.value = 3
-  // console.log('code', code.value)
-  // getid()
 }
 function MintHandle() {
   window.sessionStorage.setItem('count', 1)
   this.$router.push('/HackerProfile');
   step.value = 1
-
 }
 function init() {
   step.value = window.sessionStorage.getItem('count')
-  console.log(window.sessionStorage.getItem('count'))
+}
+function getUserInfo() {
+  console.log(code.value)
+   getAllAndroidPlugins(code.value).then(res=>{
+    console.log(res)
+    userInfo.value = res
+
+   }
+   )
 }
 onMounted(() => {
   init()
+  if (window.sessionStorage.getItem('count') == 2){
+    code.value = window.location.search.slice(6)
+    getUserInfo()
+  }
 })
 
 </script>

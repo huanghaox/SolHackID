@@ -5,11 +5,11 @@ import HackerStateForm from '../components/HackerStateForm.vue'
 import CreateHackerHouseForm from '../components/CreateHackerHouseForm.vue'
 import ViewParticipantsForm from '../components/ViewParticipantsForm.vue'
 import { Transaction, SystemProgram, Connection, PublicKey } from '@solana/web3.js';
-// import { useStore } from '@/stores/counter'
-// import { storeToRefs } from 'pinia'
+import { useStore } from '@/stores/counter'
+import { storeToRefs } from 'pinia'
 // 可以在组件中的任意位置访问 `store` 变量 ✨
-// const store = useStore()
-// const { count, userInfo } = storeToRefs(store)
+const store = useStore()
+const { userName } = storeToRefs(store)
 // const { increment } = store
 let options = null
 const chart = ref(null)
@@ -165,12 +165,13 @@ await connection.getSignatureStatus(signature);
             <img src="../../public/Rectangle.png" alt="" />
           </div>
           <div class="profile_avatar">
-            <img src="../../public/Ellipse.png" alt="" />
+            
           </div>
 
           <div class="profile_completion">
+            <img src="../../public/Ellipse.png" alt="" />
             <div class="profile_completion_left">
-              <p class="nick_name">Simon</p>
+              <p class="nick_name">{{userName.name}}</p>
               <p>profile_completion</p>
               <el-progress :text-inside="true" :stroke-width="26" :percentage="70" />
             </div>
@@ -336,26 +337,30 @@ await connection.getSignatureStatus(signature);
       width: 100%;
     }
   }
-  .profile_avatar {
-    position: absolute;
-    top: 17rem;
-    left: 26rem;
-    border: 0.5rem #fff solid;
-    border-radius: 50%;
-    width: 15rem;
-    height: 15rem;
-    & img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
+  // .profile_avatar {
+  //   top: 17rem;
+  //   left: 26rem;
+  //   border: 0.5rem #fff solid;
+  //   border-radius: 50%;
+  //   width: 15rem;
+  //   height: 15rem;
+    
+  // }
   .profile_completion {
     display: flex;
-    padding-left: 25rem;
+    padding-left: 10rem;
     width: 100%;
+    & img {
+
+      width: 10rem;
+      height: 10rem;
+      border: 0.5rem #fff solid;
+      border-radius: 50%;
+      object-fit: cover;
+    }
     &_left {
       width: 25rem;
+      margin-left: 5rem;
       .nick_name {
         font-size: 3rem;
         font-weight: bolder;
