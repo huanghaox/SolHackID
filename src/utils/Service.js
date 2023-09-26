@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { ElLoading,ElMessage } from 'element-plus'
-const ConfigBaseURL = 'https://localhost:3000/' //默认路径，这里也可以使用env来判断环境
+const ConfigBaseURL = 'http://localhost:3000/' //默认路径，这里也可以使用env来判断环境
 const options ={
     lock: true,
     text: 'Loading',

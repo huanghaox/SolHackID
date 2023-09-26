@@ -1,23 +1,57 @@
 <script setup>
-import { ref } from 'vue'
+import axios from 'axios';
+import { ref,onMounted } from 'vue'
+// import { getCode } from '../utils/request.js'
+import { useStore } from '@/stores/counter'
+import { storeToRefs } from 'pinia'
+
+const store = useStore()
+const { count } = storeToRefs(store)
 
 const input = ref('')
 const loading = ref(false)
 const step = ref(1)
-
+const code = ref('')
+// function getid(){
+//   axios.get(`http://localhost:5173/github/callback?code=${code.value}`) // 替换为你的API端点
+//         .then(response => {
+//           console.log(response);
+//         })
+//         .catch(error => {
+//           console.error('请求失败：', error);
+//         });
+// }
 function clickHandle() {
-  // window.open('https://github.com/')
   step.value = 2
+  window.sessionStorage.setItem('count', 2)
+  window.open('https://github.com/login/oauth/authorize?client_id=152c6b12ae755df02796')
+  code.value = window.location.search.slice(6)
 }
-function nextHandle() {
+async function nextHandle() {
   alert(input.value)
+   store.increment()
+  // const res = await getCode(code)
+  window.sessionStorage.setItem('count', 3)
   step.value = 3
+  // console.log('code', code.value)
+  // getid()
 }
 function MintHandle() {
-  // this.$router.push('/HackerProfile');
+  window.sessionStorage.setItem('count', 1)
+  this.$router.push('/HackerProfile');
   step.value = 1
+
 }
+function init() {
+  step.value = window.sessionStorage.getItem('count')
+  console.log(window.sessionStorage.getItem('count'))
+}
+onMounted(() => {
+  init()
+})
+
 </script>
+
 
 <template>
   <div class="common-layout" v-loading="loading">
@@ -40,8 +74,10 @@ function MintHandle() {
         </div>
         <div class="step_three" v-else>
           <router-link to="/HackerProfile">
-          <el-text tag="ins" class="tips_three" @click="MintHandle">Claim Hacker SBT On SOLANA</el-text>
-        </router-link>
+            <el-text tag="ins" class="tips_three" @click="MintHandle"
+              >Claim Hacker SBT On SOLANA</el-text
+            >
+          </router-link>
         </div>
         <div class="footer">STEP {{ step }}/3</div>
       </el-card>
@@ -70,8 +106,8 @@ function MintHandle() {
   border-radius: 1.875rem;
   // justify-content: center;
   text-align: center;
-  .el-card__body{
-    height: 28.625rem ;
+  .el-card__body {
+    height: 28.625rem;
   }
   .title {
     margin: auto;
@@ -83,7 +119,9 @@ function MintHandle() {
     text-justify: distribute-all-lines;
     text-align-last: justify;
   }
-  .step_one,.step_two,.step_three {
+  .step_one,
+  .step_two,
+  .step_three {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -92,11 +130,13 @@ function MintHandle() {
     width: 12rem;
     height: 14.125rem;
   }
-  .step_two{
+  .step_two {
     width: 34rem;
     margin-top: 0rem;
   }
-  .tips_one,.tips_two,.tips_three {
+  .tips_one,
+  .tips_two,
+  .tips_three {
     width: 11rem;
     font-size: 1rem;
     color: #868484;
@@ -105,7 +145,7 @@ function MintHandle() {
     text-justify: distribute-all-lines;
     text-align-last: justify;
   }
-  .tips_three{
+  .tips_three {
     width: 24rem;
   }
   .github {
@@ -114,11 +154,11 @@ function MintHandle() {
       cursor: pointer;
     }
   }
-  .el-text{
-    margin-top: .75rem;
+  .el-text {
+    margin-top: 0.75rem;
     font-size: 1.5rem;
     margin-bottom: 1rem;
-    &:hover{
+    &:hover {
       cursor: pointer;
     }
   }

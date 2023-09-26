@@ -4,7 +4,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 import HackerStateForm from '../components/HackerStateForm.vue'
 import CreateHackerHouseForm from '../components/CreateHackerHouseForm.vue'
 import ViewParticipantsForm from '../components/ViewParticipantsForm.vue'
-
+import { Transaction, SystemProgram, Connection, PublicKey } from '@solana/web3.js';
 // import { useStore } from '@/stores/counter'
 // import { storeToRefs } from 'pinia'
 // 可以在组件中的任意位置访问 `store` 变量 ✨
@@ -118,13 +118,20 @@ function logoutHandle() {
 function getProvider () {
   if ('phantom' in window) {
     provider = window.phantom?.solana;
-    console.log(provider)
     if (provider?.isPhantom) {
       return provider;
     }
   }
   window.open('https://phantom.app/', '_blank');
 };
+ async function signMessage(){ //// see "Detecting the Provider"
+const network = "https://api.devnet.solana.com";
+const connection = new Connection(network);
+const transaction = new Transaction();
+const { signature } =await provider.signAndSendTransaction(transaction);
+await connection.getSignatureStatus(signature);
+ console.log("111",signature)
+}
 </script>
 <template>
   <div class="common-layout">
@@ -138,7 +145,7 @@ function getProvider () {
           v-if="isConnect == true "
         >
         <div class="Profile">
-          <el-text tag="ins" size="large">Profile</el-text>
+          <el-text tag="ins" size="large" @click="signMessage()">Profile</el-text>
         </div>
         <div class="LogOut" @click="logoutHandle">
           <el-text tag="ins" size="large">Log Out</el-text>
@@ -149,7 +156,7 @@ function getProvider () {
             
           </template>
         </el-popover>
-        <el-text v-if="isConnect == false" @click="connectWallet()"  tag="ins" size="large">Connect Wallet</el-text>
+        <el-text v-if="isConnect == false" @click="connectWallet"  tag="ins" size="large">Connect Wallet</el-text>
       </el-header>
       <el-container class="container">
         <el-aside></el-aside>
@@ -331,8 +338,8 @@ function getProvider () {
   }
   .profile_avatar {
     position: absolute;
-    top: 21rem;
-    left: 30rem;
+    top: 17rem;
+    left: 26rem;
     border: 0.5rem #fff solid;
     border-radius: 50%;
     width: 15rem;

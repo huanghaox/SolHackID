@@ -8,8 +8,11 @@ export const useStore = defineStore('counter', () => {
     userInfo.value = newInfo
   }
   // const doubleCount = computed(() => count.value * 2)
+  function resertCount() {
+    count.value = 0
+  }
   function increment() {
     count.value++
   }
-  return { count, increment,userInfo,setUserInfo }
+  return { count, increment, userInfo, setUserInfo, resertCount }
 })
